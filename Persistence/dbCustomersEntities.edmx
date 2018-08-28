@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="dbBankModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="tbCustomers">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbSavings">
+          <Key>
+            <PropertyRef Name="SavingId" />
+          </Key>
+          <Property Name="Customer_Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SavingId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoutingNumber" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="AccountNumber" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="Amount" Type="smallmoney" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_tbSavings_tbCustomers">
+          <End Role="tbCustomers" Type="Self.tbCustomers" Multiplicity="1" />
+          <End Role="tbSavings" Type="Self.tbSavings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbCustomers">
+              <PropertyRef Name="CustomerId" />
+            </Principal>
+            <Dependent Role="tbSavings">
+              <PropertyRef Name="Customer_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="dbBankModelStoreContainer">
+          <EntitySet Name="tbCustomers" EntityType="Self.tbCustomers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbSavings" EntityType="Self.tbSavings" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tbSavings_tbCustomers" Association="Self.FK_tbSavings_tbCustomers">
+            <End Role="tbCustomers" EntitySet="tbCustomers" />
+            <End Role="tbSavings" EntitySet="tbSavings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="dbBankModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="tbCustomer">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="tbSavings" Relationship="Self.FK_tbSavings_tbCustomers" FromRole="tbCustomers" ToRole="tbSavings" />
+        </EntityType>
+        <EntityType Name="tbSaving">
+          <Key>
+            <PropertyRef Name="SavingId" />
+          </Key>
+          <Property Name="Customer_Id" Type="Guid" Nullable="false" />
+          <Property Name="SavingId" Type="Int32" Nullable="false" />
+          <Property Name="AccountNumber" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="tbCustomer" Relationship="Self.FK_tbSavings_tbCustomers" FromRole="tbSavings" ToRole="tbCustomers" />
+          <Property Name="RoutingNumber" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Amount" Type="Decimal" Precision="10" Scale="4" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_tbSavings_tbCustomers">
+          <End Role="tbCustomers" Type="Self.tbCustomer" Multiplicity="1" />
+          <End Role="tbSavings" Type="Self.tbSaving" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbCustomers">
+              <PropertyRef Name="CustomerId" />
+            </Principal>
+            <Dependent Role="tbSavings">
+              <PropertyRef Name="Customer_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="dbBankEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tbCustomers" EntityType="Self.tbCustomer" />
+          <EntitySet Name="tbSavings" EntityType="Self.tbSaving" />
+          <AssociationSet Name="FK_tbSavings_tbCustomers" Association="Self.FK_tbSavings_tbCustomers">
+            <End Role="tbCustomers" EntitySet="tbCustomers" />
+            <End Role="tbSavings" EntitySet="tbSavings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="dbBankModelStoreContainer" CdmEntityContainer="dbBankEntities">
+          <EntitySetMapping Name="tbCustomers">
+            <EntityTypeMapping TypeName="dbBankModel.tbCustomer">
+              <MappingFragment StoreEntitySet="tbCustomers">
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbSavings">
+            <EntityTypeMapping TypeName="dbBankModel.tbSaving">
+              <MappingFragment StoreEntitySet="tbSavings">
+                <ScalarProperty Name="RoutingNumber" ColumnName="RoutingNumber" />
+                <ScalarProperty Name="Customer_Id" ColumnName="Customer_Id" />
+                <ScalarProperty Name="SavingId" ColumnName="SavingId" />
+                <ScalarProperty Name="AccountNumber" ColumnName="AccountNumber" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
